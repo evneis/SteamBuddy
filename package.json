@@ -1,0 +1,27 @@
+{
+  "name": "steambuddy",
+  "version": "1.0.0",
+  "description": "A Discord bot for comparing Steam libraries and suggesting multiplayer games",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "nodemon src/index.js"
+  },
+  "keywords": [
+    "discord",
+    "bot",
+    "steam",
+    "gaming"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "discord.js": "^14.14.1",
+    "dotenv": "^16.3.1",
+    "firebase-admin": "^11.11.0",
+    "node-fetch": "^2.7.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  }
+}
