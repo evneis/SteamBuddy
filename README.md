@@ -1,137 +1,143 @@
-🔧 Core Features
-✅ 1. Steam Account Linking
-Command: /linksteam <Steam ID or vanity URL>
+# 🎮 PlayPal: A Discord Bot for Steam Game Comparison and Game Nights
 
-Stores the user’s Discord ID and Steam64 ID in Firestore.
+**PlayPal** is a Discord bot that helps you and your friends decide what to play based on your shared Steam libraries. It compares owned games and suggests multiplayer-friendly options for game nights — filterable by genre, number of players, and more.
 
-Validates ID via ResolveVanityURL.
+---
 
-Tracks user’s game library using GetOwnedGames.
+## 📌 Project Goals
 
-Firestore Structure:
+- Help Discord users compare their Steam libraries with friends.
+- Suggest multiplayer games that multiple users own.
+- Encourage more spontaneous game nights through easy game discovery.
+- Make the bot fast, fun, and visually appealing with Discord embeds.
+- Keep everything lightweight by using free-tier tools like Firebase and the Steam Web API.
 
-json
-Copy
-Edit
-users/
-  <discord_user_id>:
-    steam_id: "7656119xxxxxx"
-    username: "username"
-    linked_at: timestamp
-    last_fetched: timestamp
-    owned_games: [
-      {
-        appid: 570,
-        name: "Dota 2",
-        playtime_forever: 1234
-      },
-      ...
-    ]
-🔄 2. Game Ownership Comparator
-Command: /gamesincommon [@user1 @user2 ...]
+---
 
-Compares the Steam libraries of mentioned users.
+## 🔧 Core Features
 
-Displays a sorted list of common games with:
+### ✅ 1. Steam Account Linking
 
-✅ Player counts (who owns it)
+**Command:** `/linksteam <Steam ID or vanity URL>`
 
-⏱️ Total playtime per person
+- Stores the user’s Discord ID and Steam64 ID in Firebase.
+- Validates the ID using `ResolveVanityURL`.
+- Tracks the user’s game library using `GetOwnedGames`.
 
-🎯 Optionally filter by: multiplayer only, minimum # of players
+**Firestore Structure:**
 
-Bonus: Include emojis for popularity, like:
+**Collection:** `users`  
+**Document ID:** `<discord_user_id>`  
+**Fields:**
+- `steam_id`: `"7656119xxxxxx"`
+- `username`: `"username"`
+- `linked_at`: Timestamp
+- `last_fetched`: Timestamp
+- `owned_games`: Array of games with:
+  - `appid`: e.g., `570`
+  - `name`: e.g., `"Dota 2"`
+  - `playtime_forever`: e.g., `1234` (in minutes)
 
-🏆 = Everyone owns it
+---
 
-⚠️ = No one has launched it
+### 🔄 2. Game Ownership Comparator
 
-🎉 3. Game Night Suggestion Tool
-Command: /gamenight [minPlayers] [maxPlayers] [genre] [ownedByAll:true/false]
+**Command:** `/gamesincommon [@user1 @user2 ...]`
 
-Filters the most suitable games across the group based on:
+- Compares the Steam libraries of mentioned users.
+- Displays a sorted list of common games with:
+  - ✅ Number of people who own the game
+  - ⏱️ Total playtime per person
+  - 🎯 Filters: multiplayer only, minimum number of players
 
-Game ownership count
+**Bonus Emoji Indicators:**
+- 🏆 Everyone owns it
+- ⚠️ No one has played it
 
-Optional genre filtering (via a cached genre lookup table or external metadata API like RAWG.io)
+---
 
-Optional player count range
+### 🎉 3. Game Night Suggestion Tool
 
-Optional tag: “owned by all”
+**Command:** `/gamenight [minPlayers] [maxPlayers] [genre] [ownedByAll:true/false]`
 
-Presents the top 3–5 games:
+- Filters for best multiplayer games across the group:
+  - Game ownership count
+  - Genre filtering (if metadata is available)
+  - Player count range
+  - "Owned by all" toggle
 
-plaintext
-Copy
-Edit
+**Example Output:**
 🎮 Game: Phasmophobia
 ✅ Owned by: Alice, Bob, Charlie
 👥 Min Players: 2, Max Players: 4
 🔥 Most played by: Alice (22h)
-🛍️ Link: https://store.steampowered.com/app/739630
-📥 4. Update & Cache Handling
-On account linking or once per day, fetch game library from Steam API.
+🛍️ https://store.steampowered.com/app/739630
 
-Cache results in Firebase to avoid excessive API calls (free Steam API is rate-limited).
 
-Firebase rules:
+---
 
-Store per-user owned_games list.
+## 📥 Update & Cache Handling
 
-Add a last_updated timestamp.
+- On account linking or once per day, fetch owned games via Steam API.
+- Cache results in Firebase to stay under Steam API rate limits.
+- Track `last_updated` timestamps for each user.
+- Allow manual refresh with `/refresh`.
 
-Only refresh if:
+---
 
-User runs /refresh
+## 🧩 Optional Add-ons
 
-Daily cron job (optional)
+| Feature                | Description                              |
+|------------------------|------------------------------------------|
+| `/backlog [@user]`     | List games a user owns but hasn't played |
+| `/playedlastweek`      | Show recently played games               |
+| `/leaderboard`         | Rank by hours played in the past month   |
+| `/linkgames`           | Allow users to manually add games        |
 
-🧩 Optional Add-ons
-Feature	Description
-/backlog [@user]	Show games user owns but never played
-/playedlastweek [@user]	Show user’s recently played games
-/linkgames	Link games from other platforms manually
-/leaderboard	Rank friends by hours played last month
+---
 
-🛠️ Tech Stack
-Layer	Tech
-Bot Framework	Discord.js or discord.py
-Database	Firebase Firestore (free)
-Steam API	GetOwnedGames, ResolveVanityURL
-Deployment	Railway / Render / Glitch / Replit (all free options)
-Optional Frontend	Next.js + Firebase Hosting or Discord embeds only
+## 🛠️ Tech Stack
 
-🔐 Permissions & Rate Limits
-Only show game comparisons between users who’ve explicitly opted in via /linksteam.
+| Layer         | Tech                                                  |
+|---------------|--------------------------------------------------------|
+| Bot Framework | Discord.js or discord.py                              |
+| Database      | Firebase Firestore (free tier)                        |
+| API           | Steam Web API (GetOwnedGames, ResolveVanityURL, etc.) |
+| Hosting       | Railway, Render, Glitch, or Replit (free options)     |
+| Optional UI   | Next.js + Firebase Hosting or Discord-only embeds     |
 
-Do not cache more than 1 request per user per 24 hours unless they trigger a refresh.
+---
 
-📅 Milestone Breakdown
-✅ Phase 1: Core Infrastructure
- Set up bot commands (/linksteam, /gamesincommon)
+## 🔐 Permissions & Rate Limits
 
- Store user + game data in Firebase
+- Only compare users who’ve opted in via `/linksteam`.
+- Cache game data per user, only updating once every 24 hours unless forced.
+- Use Firebase rules to control access to user-owned data.
 
- Basic game comparison output
+---
 
-🚀 Phase 2: Game Night Tool
- Add filters for genre and player count
+## 📅 Milestone Breakdown
 
- Fetch/store static game metadata (RAWG.io or your own JSON)
+### Phase 1: Core Infrastructure
+- [ ] Set up bot commands (`/linksteam`, `/gamesincommon`)
+- [ ] Store user and game data in Firebase
+- [ ] Display basic comparison results
 
- Sort and present top games for game night
+### Phase 2: Game Night Tool
+- [ ] Add filters for genre and player count
+- [ ] Fetch or store static game metadata (e.g., from RAWG.io)
+- [ ] Output best multiplayer game choices
 
-🌟 Phase 3: Quality of Life + Extras
- Periodic updates or scheduled reports
+### Phase 3: Extras and UX Polish
+- [ ] Add `/refresh`, `/backlog`, and `/playedlastweek` commands
+- [ ] Optimize embeds and error handling
+- [ ] Explore optional web dashboard
 
- /refresh command to pull fresh data
+---
 
- Bonus features like /backlog, /playedlastweek
+## 🧪 Sample Command Usage
 
-🧪 Sample Command Use
-bash
-Copy
-Edit
+```bash
 /linksteam https://steamcommunity.com/id/yourvanityurl
 
 /gamesincommon @bob @alice
