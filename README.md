@@ -1,6 +1,6 @@
-# 🎮 PlayPal: A Discord Bot for Steam Game Comparison and Game Nights
+# 🎮 SteamBuddy: A Discord Bot for Steam Game Comparison and Game Nights
 
-**PlayPal** is a Discord bot that helps you and your friends decide what to play based on your shared Steam libraries. It compares owned games and suggests multiplayer-friendly options for game nights — filterable by genre, number of players, and more.
+**SteamBuddy** is a Discord bot that helps you and your friends decide what to play based on your shared Steam libraries. It compares owned games and suggests multiplayer-friendly options for game nights — filterable by genre, number of players, and more.
 
 ---
 
